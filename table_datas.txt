@@ -1,0 +1,80 @@
+INSERT INTO users (wallet_address, username, email) VALUES
+('0x1234567890abcdef1234567890abcdef12345678', 'Alice', 'alice@example.com'),
+('0xabcdef1234567890abcdef1234567890abcdef12', 'Bob', 'bob@example.com'),
+('0x7890abcdef1234567890abcdef1234567890abcd', 'Charlie', 'charlie@example.com'),
+('0x4567890abcdef1234567890abcdef1234567890a', 'Dave', 'dave@example.com'),
+('0xabcdefabcdefabcdefabcdefabcdefabcdefabcd', 'Eve', 'eve@example.com');
+
+INSERT INTO categories (name) VALUES
+('Profile Pictures'),
+('Game Items'),
+('Trading Cards'),
+('Virtual Land'),
+('Art');
+
+DO $$ 
+DECLARE 
+    i INT;
+    dummy_image BYTEA := decode('89504E470D0A1A0A', 'hex');  -- Sample PNG header as placeholder
+BEGIN
+    FOR i IN 1..50 LOOP
+        INSERT INTO assets (owner_id, name, description, image, category_id, token_address, token_id, blockchain, attributes) 
+        VALUES (
+            (SELECT id FROM users ORDER BY RANDOM() LIMIT 1),  -- Random owner
+            'NFT #' || i, 
+            'Description for NFT #' || i, 
+            dummy_image,  -- Fixed dummy image data
+            (SELECT id FROM categories ORDER BY RANDOM() LIMIT 1),  -- Random category
+            '0xNFTContract' || (i % 5 + 1),  -- Cycle through 5 contracts
+            i::TEXT, 
+            'Ethereum', 
+            ('{"rarity": "common", "attribute": "' || i || '"}')::jsonb  -- Sample attributes
+        );
+    END LOOP;
+END $$;
+
+INSERT INTO listings (asset_id, seller_id, price, currency) VALUES
+(1, 1, 0.5, 'ETH'),
+(2, 1, 1.0, 'ETH'),
+(3, 1, 0.8, 'ETH'),
+(4, 2, 0.3, 'ETH'),
+(5, 2, 2.0, 'ETH'),
+(6, 3, 3.5, 'ETH'),
+(7, 3, 4.0, 'ETH'),
+(8, 4, 1.2, 'ETH'),
+(9, 4, 0.9, 'ETH'),
+(10, 5, 5.0, 'ETH'),
+(11, 1, 0.7, 'ETH'),
+(12, 2, 1.5, 'ETH'),
+(13, 3, 2.3, 'ETH'),
+(14, 4, 3.1, 'ETH'),
+(15, 5, 0.6, 'ETH'),
+(16, 1, 0.8, 'ETH'),
+(17, 2, 1.1, 'ETH'),
+(18, 3, 2.2, 'ETH'),
+(19, 4, 3.3, 'ETH'),
+(20, 5, 4.4, 'ETH'),
+(21, 1, 0.9, 'ETH'),
+(22, 2, 1.4, 'ETH'),
+(23, 3, 2.5, 'ETH'),
+(24, 4, 3.7, 'ETH'),
+(25, 5, 4.9, 'ETH'),
+(26, 1, 1.0, 'ETH'),
+(27, 2, 2.1, 'ETH'),
+(28, 3, 3.4, 'ETH'),
+(29, 4, 4.8, 'ETH'),
+(30, 5, 5.5, 'ETH');
+
+
+INSERT INTO transactions (buyer_id, seller_id, asset_id, price, currency, tx_hash) VALUES
+(2, 1, 1, 0.5, 'ETH', '0xtxhash1'),
+(3, 1, 2, 1.0, 'ETH', '0xtxhash2'),
+(4, 1, 3, 0.8, 'ETH', '0xtxhash3'),
+(5, 2, 4, 0.3, 'ETH', '0xtxhash4'),
+(1, 2, 5, 2.0, 'ETH', '0xtxhash5'),
+(2, 3, 6, 3.5, 'ETH', '0xtxhash6'),
+(3, 4, 7, 4.0, 'ETH', '0xtxhash7'),
+(4, 5, 8, 1.2, 'ETH', '0xtxhash8'),
+(5, 1, 9, 0.9, 'ETH', '0xtxhash9'),
+(1, 3, 10, 5.0, 'ETH', '0xtxhash10');
+

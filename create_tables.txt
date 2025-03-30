@@ -1,0 +1,51 @@
+-- Users Table: Stores user information
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    wallet_address VARCHAR(42) UNIQUE NOT NULL, -- MetaMask wallet
+    username VARCHAR(50),
+    email VARCHAR(100) UNIQUE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Categories Table: Stores NFT categories (e.g., "Art", "Photography", "Collectibles")
+CREATE TABLE categories (
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- Assets Table: Stores NFTs listed on the marketplace
+CREATE TABLE assets (
+    id SERIAL PRIMARY KEY,
+    owner_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+	image BYTEA NOT NULL,
+	category_id INT REFERENCES categories(id) ON DELETE SET NULL,
+    token_address VARCHAR(42) NOT NULL, -- Smart contract address
+    token_id VARCHAR(100) NOT NULL, -- Unique identifier for the NFT
+    blockchain VARCHAR(50) NOT NULL, -- e.g., Ethereum, Polygon
+    attributes JSONB, -- Stores metadata attributes (e.g., rarity, stats)
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Transactions Table: Records NFT sales and transfers
+CREATE TABLE transactions (
+    id SERIAL PRIMARY KEY,
+    buyer_id INT REFERENCES users(id) ON DELETE SET NULL,
+    seller_id INT REFERENCES users(id) ON DELETE SET NULL,
+    asset_id INT NOT NULL REFERENCES assets(id) ON DELETE CASCADE,
+    price DECIMAL(18,8) NOT NULL, -- Cryptocurrency price
+    currency VARCHAR(50) NOT NULL, -- e.g., ETH, MATIC
+    tx_hash VARCHAR(66) UNIQUE NOT NULL, -- On-chain transaction hash
+    timestamp TIMESTAMP DEFAULT NOW()
+);
+
+-- Listings Table: Handles active marketplace listings
+CREATE TABLE listings (
+    id SERIAL PRIMARY KEY,
+    asset_id INT NOT NULL REFERENCES assets(id) ON DELETE CASCADE,
+    seller_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    price DECIMAL(18,8) NOT NULL,
+    currency VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
