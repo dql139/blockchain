@@ -20,18 +20,6 @@ PostgreSQL
 JWT for authentication
 
 dotenv for config management
-## Project Structure
-.
-├── controllers/
-├── middlewares/
-├── models/
-├── routes/
-├── utils/
-├── server.js
-├── create_tables.txt
-├── table_datas.txt
-├── .env
-
 ## Setup
 Clone the repository:
 <pre lang="markdown">git clone https://github.com/dql139/blockchain
